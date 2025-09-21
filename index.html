@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор відстані до об'єкта</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .calculator-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 10px 25px rgba(240, 147, 251, 0.3);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .unit {
+            color: #666;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .result-box {
+            /*background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);*/
+            color: #000;
+            padding: 5px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            height: auto;
+        }
+
+        .result-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-number {
+            font-size: 20px;
+            margin: 0px 0;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+
+        .instruction {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .formula-box {
+                font-size: 14px;
+                padding: 15px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .copyright {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container fade-in">
+        <div class="header">
+            <h1>📏 Калькулятор відстані</h1>
+            <p>Визначення відстані до об'єкта за лінійними розмірами</p>
+        </div>
+
+        <div class="formula-box">
+            Відстань = Висота об'єкта (м) × (50 см / Розмір в лінійці)
+        </div>
+
+        <div class="instruction">
+            <strong>Як використовувати:</strong><br>
+            1. Виміряйте об'єкт через лінійку (тримайте її на відстані 50 см від ока)<br>
+            2. Введіть реальну висоту об'єкта в метрах<br>
+            3. Введіть виміряний розмір в сантиметрах<br>
+            4. Натисніть "Розрахувати"
+        </div>
+
+        <div class="input-group">
+            <label for="objectHeight">
+                Реальна висота об'єкта <span class="unit">(метри)</span>
+            </label>
+            <input type="number" id="objectHeight" step="0.1" min="0" placeholder="Наприклад: 1.8">
+        </div>
+
+        <div class="input-group">
+            <label for="rulerSize">
+                Розмір об'єкта на лінійці <span class="unit">(сантиметри)</span>
+            </label>
+            <input type="number" id="rulerSize" step="0.1" min="0" placeholder="Наприклад: 2.5">
+        </div>
+
+        <button class="calculate-btn" onclick="calculateDistance()">
+            🔍 Розрахувати відстань
+        </button>
+
+        <div class="result-box" id="resultBox">
+            <div>Відстань до об'єкта:
+            <span class="result-number" id="resultValue">0</span> <span>м.</span>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class=""><a href="https://github.com/pekarskyi/fresnel-zone-calc" target="_blank">Сторінка скрипта</a></div>
+            <div class="">Автор <a href="https://github.com/pekarskyi" target="_blank">Reset</a>, v.1.0.0</div>
+        </div>
+    </div>
+
+    <script>
+        function calculateDistance() {
+            const objectHeight = parseFloat(document.getElementById('objectHeight').value);
+            const rulerSize = parseFloat(document.getElementById('rulerSize').value);
+            const resultBox = document.getElementById('resultBox');
+            const resultValue = document.getElementById('resultValue');
+
+            // Перевірка введених даних
+            if (isNaN(objectHeight) || isNaN(rulerSize) || objectHeight <= 0 || rulerSize <= 0) {
+                showError('Введіть коректні значення більше 0');
+                return;
+            }
+
+            // Розрахунок за формулою: відстань = висота об'єкта * (50 / розмір на лінійці)
+            const distance = objectHeight * (50 / rulerSize);
+
+            // Показ результату
+            resultValue.textContent = distance.toFixed(0);
+            resultBox.className = 'result-box show';
+            
+            // Додавання анімації
+            resultBox.style.animation = 'none';
+            setTimeout(() => {
+                resultBox.style.animation = 'fadeIn 0.5s ease-out';
+            }, 10);
+        }
+
+        function showError(message) {
+            const resultBox = document.getElementById('resultBox');
+            const resultValue = document.getElementById('resultValue');
+            
+            resultValue.textContent = message;
+            resultBox.className = 'result-box show error';
+            
+            // Прибрати помилку через 3 секунди
+            setTimeout(() => {
+                resultBox.className = 'result-box';
+            }, 3000);
+        }
+
+        // Додавання можливості розрахунку по Enter
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateDistance();
+            }
+        });
+
+        // Автоматичне фокусування на першому полі
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('objectHeight').focus();
+        });
+
+        // Додавання плавної анімації для input полів
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.transition = 'transform 0.3s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
